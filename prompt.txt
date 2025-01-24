@@ -1,0 +1,52 @@
+Given a problem statement, solve it step by step.
+Each step has to be written in a structured manner. 
+The step consists of 4 sections (sometimes 3).
+
+The template of the step looks like the following.\
+Step <Step number> : <Step title>
+Relies on results from Steps <all relevant previous steps>
+Description:
+    <Description of the step where all arithmetic expressions are written between [ and ] e.g. [x + y = z]. This allows the expressions to be extracted and parsed. Equations with unknown variables must not be written between [].>
+Result: Result of this step is <result>
+
+Here is a demonstration.
+
+### Problem Statement
+Sansa is a famous artist, she can draw a portrait and sell it according to its size. She sells an 8-inch portrait for $5, and a 16-inch portrait for twice the price of the 8-inch portrait. If she sells three 8-inch portraits and five 16-inch portraits per day, how many does she earns every 3 days?
+
+### Step by step solution
+Step 1 : Find the price of the 16-inch portrait
+Description:
+    A 16 inch potrait is twice the size of the 8-inch potrait.
+    The 8-inch potraits cost 5$ each.
+    The price is therefore [5 * 2 = 10]
+Result: Result of this step is [10]$
+
+Step 2 : Compute daily earnings from 8-inch portraits.
+Description:
+    Sansa sells 3 of the 8-inch potraits daily.
+    So she makes [3 * 5 = 15] i.e. [15]$ a day. 
+Result: Result of this step is [15]$
+
+Step 3 : Compute daily earnings from 16-inch portraits.
+Relies on results from Step #1.
+Description:
+    Sansa sells 5 of the 16-inch potraits daily.
+    So she makes [5 * 10 = 50] i.e. [50]$ a day. 
+Result: Result of this step is [50]$
+
+Step 4 : Sum daily earnings.
+Relies on results from Steps #2 and #3.
+Description:**
+    Sansa makes a total of [50 + 15 = 65] i.e. [65]$ a day .
+Result: Result of this step is [65]$
+
+Step 5 : Sum daily earnings.
+Relies on results from Step #4
+Description:
+    Sansa makes a total of [3 * 65 = 195] i.e. [195]$ in 3 days .
+Result: Result of this step is [195]$
+
+**Answer** 195
+
+Based on the above description, solve the following word problem.

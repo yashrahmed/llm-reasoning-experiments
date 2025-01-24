@@ -1,0 +1,77 @@
+Below is a set of heuristics you can use to programmatically grade each step in the LLM’s solution. The goal is to measure the soundness of the step itself and the correctness of its relationship to other steps, given the expected structured format. These heuristics focus on:
+	1.	Step structure and formatting
+	2.	Accuracy of arithmetic expressions
+	3.	Consistency with referenced previous steps
+	4.	Result correctness relative to the problem
+
+You can treat these heuristics as components of a reward function, each returning a partial score or a pass/fail signal, which together yield an overall grade for the step.
+
+1. Heuristics for Step Formatting
+	1.	Check for Step Header Syntax
+	•	Must match the pattern:
+        Step <number>: <short title or summary>
+	•	The step number should be sequential (1, 2, 3, …).
+	•	The presence of “Step” and “Result:” is mandatory in the template.
+
+	2.	Check for “Relies on results from Steps X, Y, …”
+	•	Steps that use intermediate results should mention which previous steps they depend on.
+	•	For step 1, we typically do not expect “Relies on …” since it’s the first step.
+	3.	Check for “Description:” section
+	•	Verify there is a Description: line.
+	•	Verify that any arithmetic expression in the description is enclosed in square brackets [ ].
+	•	For equations with unknown variables or symbolic references, ensure they are not bracketed.
+	4.	Check for “Result:” section
+	•	Must say: Result: Result of this step is [xxx]… or similar.
+	•	The bracketed quantity in “Result:” should match the final numeric outcome for that step.
+
+2. Heuristics for Arithmetic Expressions
+	1.	Are all numeric expressions in brackets [ ]?
+	•	E.g., [20 - 12 = 8] is valid.
+	•	If an expression uses a variable like “x,” that should remain outside the [ ] brackets.
+	2.	Check Correctness of Each Expression
+	•	Parse the bracketed expression(s).
+	•	For instance, if the bracket says [5 * 2 = 10], confirm 5*2 == 10.
+	•	If you find a mismatch (like [5 * 2 = 12]), penalize or mark as incorrect.
+	3.	Check Expression <-> Stated Result Consistency
+	•	If the bracketed expression yields 10, ensure the “Result: … [10]” matches that.
+	•	This ensures the numeric result is consistent.
+
+3. Heuristics for Step Dependencies
+	1.	Referenced Step Results
+	•	If Step i says “Relies on results from Steps #k”, check:
+	•	Step #k exists and has a numeric result.
+	•	The numeric from Step #k is used (or at least cited) in the arithmetic expression for Step i.
+	2.	Correct Use of Prior Step’s Value
+	•	If Step 2 references Step #1’s result of [8], but then uses [9] in the calculation, that’s inconsistent.
+	•	The system can parse the final numeric from Step #k’s “Result: … [value]” and confirm it’s the same value used in the bracketed expressions for Step i.
+
+4. Heuristics for Logical Soundness & Problem Context
+	1.	Contextual Relevance
+	•	Each step’s short title and description should match the problem domain (e.g., “Calculate total practice days,” “Compute daily hours,” etc.).
+	•	If a step is off-topic (“Compute circumference of a circle?”) in a piano practice problem, that’s suspicious.
+	2.	Coherence of Step Progression
+	•	The step order is typically: define variables or partial results → use them in subsequent calculations → combine them in a final result.
+	•	Check if the final answer in the last step aligns with the problem question (e.g., “He needs X hours per day.”)
+	3.	Check the Final Step Actually Answers the Problem
+	•	In many solutions, the final step’s result is the direct answer.
+	•	If the problem states “How many hours per day does Randy need to practice?” ensure the final step’s bracketed result matches that numeric.
+    4.  Give extra reward if the quantities used in the expression were previously cited in the description of the same step.
+
+5. Putting It All Together: Example Reward Function Outline
+
+Below is a pseudo-code style approach showing how to score a single step. You’d do this for each step, then combine scores:
+
+
+Your overall grader can:
+	•	Iterate through steps in order, building a dictionary of (stepNumber -> finalResultValue).
+	•	Keep a total or average score across steps.
+	•	Potentially require that the final step’s result matches the problem’s solution.
+
+Summary
+
+These heuristics let you programmatically verify:
+	•	The solution follows the requested structure (Step X, Description, bracketed expressions, final bracket result).
+	•	The arithmetic expressions are correct and properly correlated with earlier step results.
+	•	The solution is logically consistent and addresses the problem question.
+
+By combining them, you create a robust scoring or reward mechanism to assess each step’s fidelity and correctness.
