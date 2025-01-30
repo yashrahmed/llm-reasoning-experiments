@@ -3,8 +3,8 @@
 ## Goal: 
 Improving llm reasoning on GSM8K, GSM Symbolic and other datasets using reasoning.
 
-
 ## Idea:
+0. Learning how to fine tune llama.
 1. Use techniques like self taught reasoners (Rejection sampling?).
 2. Use techniques like MCTS.
 3. Try RL techniques.
